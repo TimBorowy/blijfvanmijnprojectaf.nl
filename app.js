@@ -47,7 +47,7 @@ app.get('/', function (req, res) {
     res.render('index', { title: 'Hey', msg: 'Hello there! This is express speaking!' })
 })
 
-app.get('/resource/all', function(req, res){
+app.get('/resource', function(req, res){
 
   coolpeopleModel.find({}, function(err, project){
     if(err){
@@ -60,7 +60,7 @@ app.get('/resource/all', function(req, res){
   
 })
 
-app.post('/resource/post', function(req, res){
+app.post('/resource', function(req, res){
   console.log(req.body)
   let form = req.body
   let newCool = coolpeopleModel({name: form.name, swagScore: form.swagScore, descr: form.descr})
@@ -72,19 +72,19 @@ app.post('/resource/post', function(req, res){
   })
 })
 
-app.put('/resource/put', function(req, res){
+app.put('/resource', function(req, res){
   return res.send()
 })
 
-app.delete('resource/delete', function(req, res){
+app.delete('/resource', function(req, res){
   return res.send()
 })
 
-app.patch('resource/patch', function(req, res){
+app.patch('/resource', function(req, res){
   return res.send()
 })
 
-app.options('resource/options', function(req, res){
+app.options('/resource', function(req, res){
   return res.send()
 })
 

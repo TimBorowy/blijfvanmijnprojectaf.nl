@@ -1,7 +1,9 @@
 const mongoose = require('mongoose')
-let url = "mongodb://localhost:27017"
+let url = "mongodb://localhost:27017/restdb"
 
-mongoose.connect(url)
+let db = mongoose.connect(url, function(err){
+  if(err) throw err
+})
 
 let projectModel = new mongoose.Schema({
     name: String,
@@ -10,4 +12,4 @@ let projectModel = new mongoose.Schema({
 
 }, {collection: 'coolpeople' })
 
-module.exports = mongoose.model('project', projectModel)
+module.exports = mongoose.model('coolpeople', projectModel)
