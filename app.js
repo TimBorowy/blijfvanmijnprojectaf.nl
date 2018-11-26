@@ -4,7 +4,7 @@ const app = express()
 const bodyParser = require('body-parser')
 const port = 3000
 
-//const model = require('./coolpeopleModel')
+//const model = require('./models/coolpeople')
 //let MongoClient = require('mongodb').MongoClient;
 const mongoose = require('mongoose')
 let url = "mongodb://localhost:27017/restdb"
@@ -54,6 +54,34 @@ app.get('/resource', function(req, res){
       res.status(500).send(err)
   
     } else{
+
+      let response = {
+        items: project,
+        _self: {self: {href: 'http://164.132.226.87:8080/resource'}},
+        pagination: {
+          currentPage: 1,
+          currentItems: 10,
+          totalPages: 1,
+          _links: {
+            first: {
+              page: 1,
+              href: 'http://164.132.226.87:8080/resource'
+            },
+            last: {
+              page: 1,
+              href: 'http://164.132.226.87:8080/resource'
+            },
+            previous: {
+              page: 1,
+              href: 'http://164.132.226.87:8080/resource'
+            },
+            next: {
+              page: 1,
+              href: 'http://164.132.226.87:8080/resource'
+            },
+          }
+        }
+      }
       res.json(project)
     }
   })
@@ -85,7 +113,10 @@ app.patch('/resource', function(req, res){
 })
 
 app.options('/resource', function(req, res){
-  return res.send()
+  res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+    res.sendStatus(200);
 })
 
 
