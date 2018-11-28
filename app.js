@@ -2,7 +2,7 @@ const express = require('express')
 const mongo = require('mongodb')
 const app = express()
 const bodyParser = require('body-parser')
-const port = 3000
+const port = 8080
 
 //const model = require('./models/coolpeople')
 //let MongoClient = require('mongodb').MongoClient;
@@ -18,7 +18,8 @@ let db = mongoose.connect(url, function(err){
 let projectModel = new mongoose.Schema({
     name: String,
     swagScore: String,
-    descr: String
+    descr: String,
+    _links: JSON
 
 }, {collection: 'coolpeople' })
 
@@ -35,7 +36,7 @@ app.use(function(req, res, next){
     next()
     return
   }
-  res.send('this app only accepts json')
+  res.status(415).send('this app only accepts json')
 })
 
 app.use( bodyParser.json() );       // to support JSON-encoded bodies
@@ -55,8 +56,25 @@ app.get('/resource', function(req, res){
   
     } else{
 
+      let fullProject = []
+
+      for (let i = 0; i < project.length; i++) {
+        let element = project[i];
+        
+        element._links = {
+          self: {
+            href: "http://164.132.226.87:8080/resource/"+element._id
+          },
+          collection: {
+              href: "http://164.132.226.87:8080/resource"
+          }
+        }
+
+        fullProject.push(element)
+      }
+
       let response = {
-        items: project,
+        items: fullProject,
         _self: {self: {href: 'http://164.132.226.87:8080/resource'}},
         pagination: {
           currentPage: 1,
@@ -82,7 +100,7 @@ app.get('/resource', function(req, res){
           }
         }
       }
-      res.json(project)
+      res.json(response)
     }
   })
   
@@ -114,7 +132,7 @@ app.patch('/resource', function(req, res){
 
 app.options('/resource', function(req, res){
   res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET,POST,OPTIONS');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
     res.sendStatus(200);
 })
