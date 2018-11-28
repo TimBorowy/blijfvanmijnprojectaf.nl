@@ -63,7 +63,22 @@ index: function(req, res){
         })
 },
 show: function (req, res) {
-    res.send('get data worked')
+    let id = req.params.id
+    coolpeopleModel.findById(id, function(err, coolPeople){
+        if(err){
+         return res.status(404).send(err).end()
+        } else {   
+            coolPeople._links = {
+                self: {
+                href: "http://164.132.226.87:8080/resource/"+coolPeople._id
+                },
+                collection: {
+                    href: "http://164.132.226.87:8080/resource"
+                }
+            }
+            res.json(coolPeople)
+        }
+    })
 },
 create: function(req, res){
     console.log(req.body)
@@ -73,14 +88,18 @@ create: function(req, res){
     newCool.save(function(err){
         if (err) return res.status(500).send(err);
         console.log('saved!')
-        return res.json({message: 'success'})
+        return res.status(201).json({message: 'success'})
     })
 },
 update: function(req, res){
     return res.send()
 },
 delete: function(req, res){
-    return res.send()
+    let id = req.params.id
+    coolpeopleModel.findByIdAndDelete(id, function(err){
+        if(err) return res.status(404).send(err)
+    })
+    return res.status(200).json({message: 'success'})
 },
 put: function(req, res){
     return res.send()
@@ -89,7 +108,7 @@ options: function(req, res){
     res.header('Access-Control-Allow-Origin', '*');
     res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
-    res.sendStatus(200);
+    res.sendStatus(200).end();
 },
 };
 module.exports = controller;
