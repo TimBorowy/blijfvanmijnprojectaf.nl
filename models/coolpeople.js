@@ -6,9 +6,19 @@ let db = mongoose.connect(url, function(err){
 })
 
 let projectModel = new mongoose.Schema({
-    name: String,
-    swagScore: String,
-    descr: String
+    name: {
+      type: String,
+      required: true
+    },
+    swagScore: {
+      type: String,
+      required: true
+    },
+    descr: {
+      type: String,
+      required: true
+    },
+    _links: JSON
 
 }, {collection: 'coolpeople' })
 
