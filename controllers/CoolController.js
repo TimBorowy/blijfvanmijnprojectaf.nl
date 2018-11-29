@@ -63,11 +63,17 @@ index: function(req, res){
         })
 },
 show: function (req, res) {
+    //bfeb22b2272f347dcbfda02
     let id = req.params.id
     coolpeopleModel.findById(id, function(err, coolPeople){
+        console.log('error: ')
+        console.log(err)
         if(err){
-         return res.status(404).send(err).end()
-        } else {   
+            return res.status(404).send(err).end()
+        } else {  
+            if(coolPeople == null){
+                return res.status(404).send("not found").end()
+            }
             coolPeople._links = {
                 self: {
                 href: "http://164.132.226.87:8080/resource/"+coolPeople._id
@@ -95,18 +101,21 @@ update: function(req, res){
     return res.send()
 },
 delete: function(req, res){
+
     let id = req.params.id
     coolpeopleModel.findByIdAndDelete(id, function(err){
         if(err) return res.status(404).send(err)
     })
     return res.status(200).json({message: 'success'})
+    
 },
 put: function(req, res){
     return res.send()
 },
 options: function(req, res){
     res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
+    res.header('accept', 'GET, POST, OPTIONS')
+    res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
     res.sendStatus(200).end();
 },
