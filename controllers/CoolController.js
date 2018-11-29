@@ -92,7 +92,7 @@ create: function(req, res){
     let newCool = coolpeopleModel({name: form.name, swagScore: form.swagScore, descr: form.descr})
 
     newCool.save(function(err){
-        if (err) return res.status(500).send(err);
+        if (err) return res.status(400).send(err);
         console.log('saved!')
         return res.status(201).json({message: 'success'})
     })
@@ -113,10 +113,10 @@ put: function(req, res){
     return res.send()
 },
 options: function(req, res){
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('accept', 'GET, POST, OPTIONS')
-    res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With');
+    res.header('Access-Control-Allow-Origin', '*')
+    res.header('Accept', 'GET, POST, OPTIONS')
+    res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With')
     res.sendStatus(200).end();
 },
 };
