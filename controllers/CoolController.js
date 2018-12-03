@@ -130,17 +130,17 @@ delete: function(req, res){
     
 },
 options: function(req, res){
-    res.header('Access-Control-Allow-Origin', '*')
+    //res.header('Access-Control-Allow-Origin', '*')
     res.header('Accept', 'GET, POST, OPTIONS')
     res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With')
+    //res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With')
     res.sendStatus(200).end();
 },
 optionsDetail: function(req, res){
-    res.header('Access-Control-Allow-Origin', '*')
+    //res.header('Access-Control-Allow-Origin', '*')
     res.header('Accept', 'GET, PUT, DELETE, OPTIONS')
     res.header('Access-Control-Allow-Methods', 'GET, PUT, DELETE, OPTIONS')
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With')
+    //res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With')
     res.sendStatus(200).end();
 },
 };

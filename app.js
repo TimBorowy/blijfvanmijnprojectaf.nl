@@ -14,6 +14,8 @@ app.use(function(req, res, next){
   console.log('Middleware!!')
 
   if (req.accepts('json')) {
+    res.header('Access-Control-Allow-Origin', '*')
+    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With')
     next()
     return
   }
