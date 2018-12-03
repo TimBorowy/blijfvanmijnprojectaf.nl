@@ -4,15 +4,17 @@ const coolpeopleModel = require('../models/coolpeople')
 let controller = {
 
 index: function(req, res){
-    let limit = ''
-    let start = ''
-
-    limit = (req.query.limit != null ? parseInt(req.query.limit) : 10)
-    start = (req.query.start != null ? parseInt(req.query.start) : 1)
+    
 
 
     // count all documents
     coolpeopleModel.countDocuments({}, function(err, count){
+
+        // if get limit is set, take that value. else get all documents
+        let limit = (req.query.limit != null ? parseInt(req.query.limit) : count)
+        // if get start is set, take that value. else start at 1
+        let start = (req.query.start != null ? parseInt(req.query.start) : 1)
+
         let documentCount = count
         let totalPages = Math.ceil(count / limit)
         let previousPage = (start == 1 ? 1 : start-1)
