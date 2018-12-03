@@ -4,67 +4,94 @@ const coolpeopleModel = require('../models/coolpeople')
 let controller = {
 
 index: function(req, res){
-    coolpeopleModel.find({}, function(err, project){
-        if(err){
-            res.status(500).send(err)
-        
-        } else{
-    
-            let fullProject = []
-    
-            for (let i = 0; i < project.length; i++) {
-            let element = project[i];
+    let limit = ''
+    let start = ''
+
+    limit = (req.query.limit != null ? parseInt(req.query.limit) : 10)
+    start = (req.query.start != null ? parseInt(req.query.start) : 0)
+
+
+    // count all documents
+    coolpeopleModel.countDocuments({}, function(err, count){
+        let documentCount = count
+        let totalPages = Math.ceil(count / limit)
+        let previousPage = (start == 1 ? 1 : start-1)
+        let nextPage = (start == totalPages ? totalPages : start+1)
+        let resourceUrl = req.protocol + '://' + req.get('host')+'/resource/'
+
+        console.log(req.protocol + '://' + req.get('host') )
+
+
+        coolpeopleModel.find({},)
+            .limit(limit)
+            .skip(start*limit - limit)
+            .exec(function(err, project){
+
+            if(err){
+                res.status(500).send(err)
             
-            element._links = {
-                self: {
-                href: "http://164.132.226.87:8080/resource/"+element._id
-                },
-                collection: {
-                    href: "http://164.132.226.87:8080/resource"
+            } else{
+                
+                
+                let fullProject = []
+        
+                for (let i = 0; i < project.length; i++) {
+                    let element = project[i];
+                    
+                    element._links = {
+                        self: {
+                        href: resourceUrl+element._id
+                        },
+                        collection: {
+                            href: resourceUrl
+                        }
+                    }
+            
+                    fullProject.push(element)
                 }
-            }
-    
-            fullProject.push(element)
-            }
-    
-            let response = {
-            items: fullProject,
-            _links: {
-                self: {
-                href: 'http://164.132.226.87:8080/resource'
-                }
-            },
-            pagination: {
-                currentPage: 1,
-                currentItems: 10,
-                totalPages: 1,
+            
+                let response = {
+                items: fullProject,
                 _links: {
-                first: {
-                    page: 1,
-                    href: 'http://164.132.226.87:8080/resource'
+                    self: {
+                    href: resourceUrl
+                    }
                 },
-                last: {
-                    page: 1,
-                    href: 'http://164.132.226.87:8080/resource'
-                },
-                previous: {
-                    page: 1,
-                    href: 'http://164.132.226.87:8080/resource'
-                },
-                next: {
-                    page: 1,
-                    href: 'http://164.132.226.87:8080/resource'
-                },
+                pagination: {
+                    currentPage: start,
+                    currentItems: limit,
+                    totalPages: totalPages,
+                    totalItems: documentCount,
+                    _links: {
+                    first: {
+                        page: 1,
+                        href: resourceUrl+'?limit='+limit+'&start=1'
+                    },
+                    last: {
+                        page: totalPages,
+                        href: resourceUrl+'?limit='+limit+'&start='+totalPages
+                    },
+                    previous: {
+                        page: previousPage,
+                        href: resourceUrl+'?limit='+limit+'&start='+previousPage
+                    },
+                    next: {
+                        page: nextPage,
+                        href: resourceUrl+'?limit='+limit+'&start='+nextPage
+                    },
+                    }
                 }
+                }
+                res.json(response) 
             }
-            }
-            res.json(response)
-        }
         })
+    })
 },
 show: function (req, res) {
     //bfeb22b2272f347dcbfda02
     let id = req.params.id
+    let resourceUrl = req.protocol + '://' + req.get('host')+'/resource/'
+
     coolpeopleModel.findById(id, function(err, coolPeople){
         if(err){
             return res.status(404).send(err).end()
@@ -74,10 +101,10 @@ show: function (req, res) {
             }
             coolPeople._links = {
                 self: {
-                href: "http://164.132.226.87:8080/resource/"+coolPeople._id
+                href: resourceUrl+coolPeople._id
                 },
                 collection: {
-                    href: "http://164.132.226.87:8080/resource"
+                    href: resourceUrl
                 }
             }
             res.json(coolPeople)
@@ -130,17 +157,13 @@ delete: function(req, res){
     
 },
 options: function(req, res){
-    //res.header('Access-Control-Allow-Origin', '*')
     res.header('Accept', 'GET, POST, OPTIONS')
     res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
-    //res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With')
     res.sendStatus(200).end();
 },
 optionsDetail: function(req, res){
-    //res.header('Access-Control-Allow-Origin', '*')
     res.header('Accept', 'GET, PUT, DELETE, OPTIONS')
     res.header('Access-Control-Allow-Methods', 'GET, PUT, DELETE, OPTIONS')
-    //res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization, Content-Length, X-Requested-With')
     res.sendStatus(200).end();
 },
 };
