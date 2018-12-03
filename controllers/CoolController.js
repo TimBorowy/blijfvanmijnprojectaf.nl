@@ -19,12 +19,10 @@ index: function(req, res){
         let nextPage = (start == totalPages ? totalPages : start+1)
         let resourceUrl = req.protocol + '://' + req.get('host')+'/resource/'
 
-        console.log(req.protocol + '://' + req.get('host') )
 
-
-        coolpeopleModel.find({},)
+        coolpeopleModel.find({})
             .limit(limit)
-            .skip(start*limit - limit)
+            .skip((start != 0 ? start*limit - limit : 0))
             .exec(function(err, project){
 
             if(err){
