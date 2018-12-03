@@ -6,10 +6,10 @@ let router = function(express){
     coolRouter.get('/', coolController.index)
     coolRouter.post('/', coolController.create)
     coolRouter.get('/:id', coolController.show)
-    coolRouter.patch('/:id', coolController.update)
-    coolRouter.put('/', coolController.put)
+    coolRouter.put('/:id', coolController.update)
     coolRouter.delete('/:id', coolController.delete)
     coolRouter.options('/', coolController.options)
+    coolRouter.options('/:id', coolController.optionsDetail)
 
     return coolRouter
 }
