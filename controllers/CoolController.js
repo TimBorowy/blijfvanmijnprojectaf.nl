@@ -111,9 +111,12 @@ update: function(req, res){
             coolPeople.swagScore = form.swagScore
             coolPeople.descr = form.descr
 
-            coolPeople.save()
+            coolPeople.save(function(err){
+                if (err) return res.status(400).send(err);
+                console.log('saved!')
+                return res.status(200).json(coolPeople)
+            })
 
-            res.status(200).json(coolPeople)
         }
     })
 },
@@ -123,7 +126,7 @@ delete: function(req, res){
     coolpeopleModel.findByIdAndDelete(id, function(err){
         if(err) return res.status(404).send(err)
     })
-    return res.status(200).json({message: 'success'})
+    return res.status(204).json({message: 'success'})
     
 },
 options: function(req, res){
