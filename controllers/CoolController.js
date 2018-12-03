@@ -8,7 +8,7 @@ index: function(req, res){
     let start = ''
 
     limit = (req.query.limit != null ? parseInt(req.query.limit) : 10)
-    start = (req.query.start != null ? parseInt(req.query.start) : 0)
+    start = (req.query.start != null ? parseInt(req.query.start) : 1)
 
 
     // count all documents
@@ -155,12 +155,12 @@ delete: function(req, res){
     
 },
 options: function(req, res){
-    res.header('Accept', 'GET, POST, OPTIONS')
+    res.header('Allow', 'GET, POST, OPTIONS')
     res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
     res.sendStatus(200).end();
 },
 optionsDetail: function(req, res){
-    res.header('Accept', 'GET, PUT, DELETE, OPTIONS')
+    res.header('Allow', 'GET, PUT, DELETE, OPTIONS')
     res.header('Access-Control-Allow-Methods', 'GET, PUT, DELETE, OPTIONS')
     res.sendStatus(200).end();
 },
