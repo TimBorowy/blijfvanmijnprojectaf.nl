@@ -1,94 +1,39 @@
 // Database model for cool people
 const coolpeopleModel = require('../models/coolpeople')
+const paginationHelper = require('../PaginationHelper')
 
 let controller = {
 
 index: function(req, res){
-    
-
 
     // count all documents
     coolpeopleModel.countDocuments({}, function(err, count){
 
         // if get limit is set, take that value. else get all documents
         let limit = (req.query.limit != null ? parseInt(req.query.limit) : count)
+
         // if get start is set, take that value. else start at 1
         let start = (req.query.start != null ? parseInt(req.query.start) : 1)
 
         let documentCount = count
-        let totalPages = Math.ceil(count / limit)
-        let previousPage = (start == 1 ? 1 : start-1)
-        let nextPage = (start == totalPages ? totalPages : start+1)
-        let resourceUrl = req.protocol + '://' + req.get('host')+'/resource/'
-
 
         coolpeopleModel.find({})
             .limit(limit)
-            .skip((start != 0 ? start*limit - limit : 0))
+            .skip((start != 0 ? start * limit - limit : 0))
             .exec(function(err, project){
 
             if(err){
                 res.status(500).send(err)
             
             } else{
-                
-                
-                let fullProject = []
-        
-                for (let i = 0; i < project.length; i++) {
-                    let element = project[i];
-                    
-                    element._links = {
-                        self: {
-                        href: resourceUrl+element._id
-                        },
-                        collection: {
-                            href: resourceUrl
-                        }
-                    }
-            
-                    fullProject.push(element)
-                }
-            
-                let response = {
-                items: fullProject,
-                _links: {
-                    self: {
-                    href: resourceUrl
-                    }
-                },
-                pagination: {
-                    currentPage: start,
-                    currentItems: limit,
-                    totalPages: totalPages,
-                    totalItems: documentCount,
-                    _links: {
-                    first: {
-                        page: 1,
-                        href: resourceUrl+'?limit='+limit+'&start=1'
-                    },
-                    last: {
-                        page: totalPages,
-                        href: resourceUrl+'?limit='+limit+'&start='+totalPages
-                    },
-                    previous: {
-                        page: previousPage,
-                        href: resourceUrl+'?limit='+limit+'&start='+previousPage
-                    },
-                    next: {
-                        page: nextPage,
-                        href: resourceUrl+'?limit='+limit+'&start='+nextPage
-                    },
-                    }
-                }
-                }
-                res.json(response) 
+                // return json compliled over at the pagination helper
+                res.json(paginationHelper.formatResouceData(project, start, count, limit, req)) 
             }
         })
     })
 },
 show: function (req, res) {
-    //bfeb22b2272f347dcbfda02
+    
     let id = req.params.id
     let resourceUrl = req.protocol + '://' + req.get('host')+'/resource/'
 
@@ -117,7 +62,7 @@ create: function(req, res){
     let newCool = coolpeopleModel({name: form.name, swagScore: form.swagScore, descr: form.descr})
 
     newCool.save(function(err){
-        if (err) return res.status(400).send(err);
+        if (err) return res.status(400).send(err)
         console.log('saved!')
         return res.status(201).json({message: 'success'})
     })
@@ -125,8 +70,7 @@ create: function(req, res){
 update: function(req, res){
     let id = req.params.id
     let form = req.body
-    console.log(form)
-    //return res.status(200).end()
+    
     coolpeopleModel.findById(id, function(err, coolPeople){
         if(err){
             return res.status(404).send(err).end()
@@ -134,12 +78,13 @@ update: function(req, res){
             if(coolPeople == null){
                 return res.status(404).send("not found").end()
             }
+            
             coolPeople.name = form.name
             coolPeople.swagScore = form.swagScore
             coolPeople.descr = form.descr
 
             coolPeople.save(function(err){
-                if (err) return res.status(400).send(err);
+                if (err) return res.status(400).send(err)
                 console.log('saved!')
                 return res.status(200).json(coolPeople)
             })
@@ -159,12 +104,12 @@ delete: function(req, res){
 options: function(req, res){
     res.header('Allow', 'GET, POST, OPTIONS')
     res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
-    res.sendStatus(200).end();
+    res.sendStatus(200).end()
 },
 optionsDetail: function(req, res){
     res.header('Allow', 'GET, PUT, DELETE, OPTIONS')
     res.header('Access-Control-Allow-Methods', 'GET, PUT, DELETE, OPTIONS')
-    res.sendStatus(200).end();
+    res.sendStatus(200).end()
 },
-};
-module.exports = controller;
+}
+module.exports = controller
